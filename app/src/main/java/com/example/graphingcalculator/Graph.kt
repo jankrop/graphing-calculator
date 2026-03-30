@@ -28,10 +28,10 @@ class Graph(context: Context, attrs: AttributeSet) : View(context, attrs) {
         style = Paint.Style.STROKE
     }
 
-    private var data: List<Float> = emptyList()
+    private var data: List<Float?> = emptyList()
     private var precision: Float = 1f
 
-    fun setData(values: List<Float>, precisionValue: Float) {
+    fun setData(values: List<Float?>, precisionValue: Float) {
         data = values
         precision = precisionValue
         invalidate()
@@ -48,9 +48,14 @@ class Graph(context: Context, attrs: AttributeSet) : View(context, attrs) {
         val graphHeight = height.toFloat()
 
         val points = data.mapIndexed { index, value ->
-            val x = index.toFloat() / 20 * graphWidth * precision
-            val y = graphHeight - (value + 10) / 20 * graphHeight
-            PointF(x, y)
+            if (value == null) {
+                null
+            } else {
+                PointF(
+                    index.toFloat() / 20 * graphWidth * precision,
+                    graphHeight - (value + 10) / 20 * graphHeight
+                )
+            }
         }
 
         for (x in 0..20) {
@@ -74,11 +79,17 @@ class Graph(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
         path.reset()
 
-        points.forEachIndexed { index, point ->
-            if (index == 0) {
-                path.moveTo(point.x, point.y)
+        var wasPreviousStepDefined = false
+        points.forEach { point ->
+            if (point == null) {
+                wasPreviousStepDefined = false
             } else {
-                path.lineTo(point.x, point.y)
+                if (wasPreviousStepDefined) {
+                    path.lineTo(point.x, point.y)
+                } else {
+                    path.moveTo(point.x, point.y)
+                }
+                wasPreviousStepDefined = true
             }
         }
 

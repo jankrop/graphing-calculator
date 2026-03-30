@@ -9,14 +9,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val data = arrayListOf<Float>()
-        for (i in -100..100) {
-            data.add(sin(i.toFloat() / 10))
-        }
+        val data = parseMath("1/x", -10f, 10f, 0.1f)
 
         println("$data")
 
         val graph = findViewById<Graph>(R.id.graph)
-        graph.setData(data.toList(), 0.1f)
+        graph.setData(data, 0.1f)
     }
 }
