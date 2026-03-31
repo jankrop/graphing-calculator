@@ -10,12 +10,16 @@ import android.util.AttributeSet
 import android.view.View
 
 class Graph(context: Context, attrs: AttributeSet) : View(context, attrs) {
-    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.RED
-        strokeWidth = 8f
-        style = Paint.Style.STROKE
+    private fun createPaint(index: Int): Paint {
+        return Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Colors.palette[index]
+            strokeWidth = 8f
+            style = Paint.Style.STROKE
+        }
     }
-
+    private val paints = arrayOf(
+        createPaint(0), createPaint(1), createPaint(2), createPaint(3)
+    )
     private val gridPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.GRAY
         strokeWidth = 2f
@@ -28,23 +32,16 @@ class Graph(context: Context, attrs: AttributeSet) : View(context, attrs) {
         style = Paint.Style.STROKE
     }
 
-    private var data: ArrayList<List<Float?>> = arrayListOf()
+    private var data: ArrayList<MathEntry> = arrayListOf()
     private var precision: Float = 0.1f
 
-    fun clear() {
-        data = arrayListOf()
-        invalidate()
-    }
-
-    fun addFunction(values: List<Float?>) {
-        data.add(values)
+    fun setData(values: ArrayList<MathEntry>) {
+        data = values
         invalidate()
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-
-        if (data.isEmpty()) return
 
         val graphWidth = width.toFloat()
         val graphHeight = height.toFloat()
@@ -68,13 +65,13 @@ class Graph(context: Context, attrs: AttributeSet) : View(context, attrs) {
         canvas.drawLine(graphWidth / 2, 0f, graphWidth / 2, graphHeight, axisPaint)
         canvas.drawLine(0f, graphHeight / 2, graphWidth, graphHeight / 2, axisPaint)
 
-        data.forEach { values ->
-            val points = values.mapIndexed { index, value ->
+        data.forEachIndexed { entryIndex, entry ->
+            val points = entry.data.mapIndexed { i, value ->
                 if (value == null) {
                     null
                 } else {
                     PointF(
-                        index.toFloat() / 20 * graphWidth * precision,
+                        i.toFloat() / 20 * graphWidth * precision,
                         graphHeight - (value + 10) / 20 * graphHeight
                     )
                 }
@@ -96,7 +93,7 @@ class Graph(context: Context, attrs: AttributeSet) : View(context, attrs) {
                 }
             }
 
-            canvas.drawPath(path, paint)
+            canvas.drawPath(path, paints[entryIndex % 4])
         }
 
 
