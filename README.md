@@ -1,12 +1,15 @@
 # graphing-calculator
-(the name is a work in progress, as is the rest of the project)
+(the name is a work in progress)
 
 A graphing calculator app for Android, similar to [Desmos](https://desmos.com)
+
+![Static Badge](https://img.shields.io/badge/tests-passing)
+![Static Badge](https://img.shields.io/badge/SDK_version-36)
+![Static Badge](https://img.shields.io/badge/license-CC0)
 
 ## How to run
 
 You will find a .apk file with the application in the Releases.
-**NOTE: As the app is still in early stages of development, there is no APK yet. Stay tuned!**
 
 If you insist on building from source (like the open source freedom fighter you are), the best way to do it is with Android Studio.
 
