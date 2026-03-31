@@ -3,9 +3,9 @@
 
 A graphing calculator app for Android, similar to [Desmos](https://desmos.com)
 
-![Static Badge](https://img.shields.io/badge/tests-passing)
-![Static Badge](https://img.shields.io/badge/SDK_version-36)
-![Static Badge](https://img.shields.io/badge/license-CC0)
+![Static Badge](https://img.shields.io/badge/tests-passing-blue)
+![Static Badge](https://img.shields.io/badge/SDK_version-36-blue)
+![Static Badge](https://img.shields.io/badge/license-CC0-blue)
 
 ## How to run
 
