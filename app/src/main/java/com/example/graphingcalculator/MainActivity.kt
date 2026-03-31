@@ -16,9 +16,11 @@ class MainActivity : AppCompatActivity() {
         val expressionInput = findViewById<EditText>(R.id.expressionInput)
         val plotButton = findViewById<Button>(R.id.plotButton)
 
+        graph.clear()
+
         plotButton.setOnClickListener {
             val data = parseMath(expressionInput.text.toString(), -10f, 10f, 0.1f)
-            graph.setData(data, 0.1f)
+            graph.addFunction(data)
         }
     }
 }

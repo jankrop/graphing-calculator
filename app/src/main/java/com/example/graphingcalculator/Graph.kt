@@ -28,16 +28,18 @@ class Graph(context: Context, attrs: AttributeSet) : View(context, attrs) {
         style = Paint.Style.STROKE
     }
 
-    private var data: List<Float?> = emptyList()
-    private var precision: Float = 1f
+    private var data: ArrayList<List<Float?>> = arrayListOf()
+    private var precision: Float = 0.1f
 
-    fun setData(values: List<Float?>, precisionValue: Float) {
-        data = values
-        precision = precisionValue
+    fun clear() {
+        data = arrayListOf()
         invalidate()
     }
 
-    private val path = Path()
+    fun addFunction(values: List<Float?>) {
+        data.add(values)
+        invalidate()
+    }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -46,17 +48,6 @@ class Graph(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
         val graphWidth = width.toFloat()
         val graphHeight = height.toFloat()
-
-        val points = data.mapIndexed { index, value ->
-            if (value == null) {
-                null
-            } else {
-                PointF(
-                    index.toFloat() / 20 * graphWidth * precision,
-                    graphHeight - (value + 10) / 20 * graphHeight
-                )
-            }
-        }
 
         for (x in 0..20) {
             if (x == 10) continue
@@ -77,22 +68,37 @@ class Graph(context: Context, attrs: AttributeSet) : View(context, attrs) {
         canvas.drawLine(graphWidth / 2, 0f, graphWidth / 2, graphHeight, axisPaint)
         canvas.drawLine(0f, graphHeight / 2, graphWidth, graphHeight / 2, axisPaint)
 
-        path.reset()
-
-        var wasPreviousStepDefined = false
-        points.forEach { point ->
-            if (point == null) {
-                wasPreviousStepDefined = false
-            } else {
-                if (wasPreviousStepDefined) {
-                    path.lineTo(point.x, point.y)
+        data.forEach { values ->
+            val points = values.mapIndexed { index, value ->
+                if (value == null) {
+                    null
                 } else {
-                    path.moveTo(point.x, point.y)
+                    PointF(
+                        index.toFloat() / 20 * graphWidth * precision,
+                        graphHeight - (value + 10) / 20 * graphHeight
+                    )
                 }
-                wasPreviousStepDefined = true
             }
+
+            val path = Path()
+
+            var wasPreviousStepDefined = false
+            points.forEach { point ->
+                if (point == null) {
+                    wasPreviousStepDefined = false
+                } else {
+                    if (wasPreviousStepDefined) {
+                        path.lineTo(point.x, point.y)
+                    } else {
+                        path.moveTo(point.x, point.y)
+                    }
+                    wasPreviousStepDefined = true
+                }
+            }
+
+            canvas.drawPath(path, paint)
         }
 
-        canvas.drawPath(path, paint)
+
     }
 }
