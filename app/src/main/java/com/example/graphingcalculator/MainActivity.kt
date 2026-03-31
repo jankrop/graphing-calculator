@@ -12,6 +12,9 @@ import com.google.android.material.snackbar.Snackbar
 import kotlin.math.exp
 import kotlin.math.sin
 
+/**
+ * The app's main activity, containing the graph
+ */
 class MainActivity : AppCompatActivity(), MathAdapter.OnEntryDeletedListener {
     private lateinit var adapter: MathAdapter
     private val expressions = arrayListOf<MathEntry>()

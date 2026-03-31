@@ -9,6 +9,9 @@ import android.widget.BaseAdapter
 import android.widget.ImageButton
 import android.widget.TextView
 
+/**
+ * An adapter for the list of expressions
+ */
 class MathAdapter(
     private val context: Context,
     private val data: MutableList<MathEntry>,

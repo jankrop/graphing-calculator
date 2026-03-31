@@ -2,6 +2,9 @@ package com.example.graphingcalculator
 
 import android.graphics.Color
 
+/**
+ * The graph's color palette
+ */
 object Colors {
     val palette = listOf(
         Color.rgb(255, 0, 0),

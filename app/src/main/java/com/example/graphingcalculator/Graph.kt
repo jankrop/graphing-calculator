@@ -9,6 +9,9 @@ import android.graphics.PointF
 import android.util.AttributeSet
 import android.view.View
 
+/**
+ * A graph view capable of displaying multiple mathematical functions
+ */
 class Graph(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private fun createPaint(index: Int): Paint {
         return Paint(Paint.ANTI_ALIAS_FLAG).apply {
