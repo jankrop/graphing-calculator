@@ -56,7 +56,13 @@ private fun tokenize(expr: String): List<String> {
             c.isLetter() -> {
                 val start = i
                 while (i < expr.length && expr[i].isLetter()) i++
-                tokens.add(expr.substring(start, i).lowercase())
+                val ident = expr.substring(start, i).lowercase()
+
+                if (ident != "x" && ident !in functions && ident !in constants) {
+                    throw IllegalArgumentException("Unknown identifier: $ident")
+                }
+
+                tokens.add(ident)
                 continue
             }
 

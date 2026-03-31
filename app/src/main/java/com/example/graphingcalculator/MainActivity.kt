@@ -8,6 +8,7 @@ import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.android.material.snackbar.Snackbar
 import kotlin.math.exp
 import kotlin.math.sin
 
@@ -42,14 +43,19 @@ class MainActivity : AppCompatActivity(), MathAdapter.OnEntryDeletedListener {
 
         plotButton.setOnClickListener {
             val expression = expressionInput.text.toString()
-            expressionInput.setText("")
 
-            expressions.add(MathEntry(
-                expression,
-                parseMath(expression, -10f, 10f, 0.1f)
-            ))
-            adapter.notifyDataSetChanged()
-            graph.setData(expressions)
+            try {
+                expressions.add(MathEntry(
+                    expression,
+                    parseMath(expression, -10f, 10f, 0.1f)
+                ))
+                expressionInput.setText("")
+                adapter.notifyDataSetChanged()
+                graph.setData(expressions)
+            } catch (e: Exception) {
+                Snackbar.make(findViewById(android.R.id.content), "Malformed expression", Snackbar.LENGTH_SHORT).show()
+            }
+
         }
     }
 }

@@ -69,4 +69,12 @@ class FunctionParserTest {
         assertNotNull(result[0])
         assertEquals(kotlin.math.sqrt(5f), result[0]!!, 1e-4f)
     }
+
+    /**
+     * Tests whether an IllegalArgumentException is thrown for unexpected identifiers.
+     */
+    @Test(expected = IllegalArgumentException::class)
+    fun testUnknownIdentifier() {
+        parseMath("h", 0f, 1f, 1f)
+    }
 }
