@@ -67,7 +67,19 @@ private fun tokenize(expr: String): List<String> {
             }
 
             c in listOf('+', '-', '*', '/', '^', '(', ')') -> {
-                tokens.add(c.toString())
+                val token = c.toString()
+
+                if (token == "-") {
+                    val prev = tokens.lastOrNull()
+
+                    val isUnary = prev == null ||
+                            prev in listOf("+", "-", "*", "/", "^", "(")
+
+                    tokens.add(if (isUnary) "u-" else "-")
+                } else {
+                    tokens.add(token)
+                }
+
                 i++
             }
 
@@ -103,7 +115,8 @@ private val precedence = mapOf(
     "-" to 1,
     "*" to 2,
     "/" to 2,
-    "^" to 3
+    "u-" to 3,
+    "^" to 4
 )
 
 /**
@@ -172,6 +185,12 @@ private fun evalRPN(rpn: List<String>, xValue: Float): Float? {
             token == "x" -> stack.addLast(xValue)
 
             token in constants -> stack.addLast(constants[token]!!)
+
+            token == "u-" -> {
+                if (stack.isEmpty()) return null
+                val v = stack.removeLast()
+                stack.addLast(-v)
+            }
 
             token in listOf("+", "-", "*", "/", "^") -> {
                 if (stack.size < 2) return null

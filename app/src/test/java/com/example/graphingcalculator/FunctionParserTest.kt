@@ -12,9 +12,9 @@ class FunctionParserTest {
      */
     @Test
     fun testPolynomial() {
-        val result = parseMath("x^2 + 3x - 2", 0f, 2f, 1f)
+        val result = parseMath("-x^2 + 3x - 2", 0f, 2f, 1f)
 
-        assertEquals(listOf(-2f, 2f, 8f), result)
+        assertEquals(listOf(-2f, 0f, 0f), result)
     }
 
     /**
