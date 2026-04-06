@@ -1,9 +1,11 @@
 package com.example.graphingcalculator
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -40,6 +42,9 @@ class MainActivity : AppCompatActivity(), MathAdapter.OnEntryDeletedListener {
         val expressionInput = findViewById<EditText>(R.id.expressionInput)
         val plotButton = findViewById<Button>(R.id.plotButton)
         val expressionList = findViewById<ListView>(R.id.expressionList)
+        val settingsButton = findViewById<ImageButton>(R.id.settingsButton)
+
+        val sharedPref = getSharedPreferences("prefs", MODE_PRIVATE)
 
         adapter = MathAdapter(this, expressions, this)
         expressionList.adapter = adapter
@@ -50,7 +55,7 @@ class MainActivity : AppCompatActivity(), MathAdapter.OnEntryDeletedListener {
             try {
                 expressions.add(MathEntry(
                     expression,
-                    parseMath(expression, -10f, 10f, 0.1f)
+                    parseMath(expression, -10f, 10f, 0.1f, sharedPref.getBoolean("isRadians", true))
                 ))
                 expressionInput.setText("")
                 adapter.notifyDataSetChanged()
@@ -59,6 +64,10 @@ class MainActivity : AppCompatActivity(), MathAdapter.OnEntryDeletedListener {
                 Snackbar.make(findViewById(android.R.id.content), "Malformed expression", Snackbar.LENGTH_SHORT).show()
             }
 
+        }
+
+        settingsButton.setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java))
         }
     }
 }

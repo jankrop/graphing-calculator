@@ -20,7 +20,8 @@ fun parseMath(
     expression: String,
     minX: Float,
     maxX: Float,
-    precision: Float
+    precision: Float,
+    isRadians: Boolean,
 ): List<Float?> {
     val tokens = tokenize(expression.replace(" ", ""))
     val rpn = toRPN(tokens)
@@ -28,7 +29,7 @@ fun parseMath(
     val results = mutableListOf<Float?>()
     var x = minX
     while (x <= maxX + 1e-6f) {
-        results.add(evalRPN(rpn, x))
+        results.add(evalRPN(rpn, x, isRadians))
         x += precision
     }
     return results
@@ -175,7 +176,7 @@ private fun toRPN(tokens: List<String>): List<String> {
  * Evaluates a Reverse Polish Notation expression for a given x value.
  * Returns null if the expression is undefined at this x (e.g., division by zero).
  */
-private fun evalRPN(rpn: List<String>, xValue: Float): Float? {
+private fun evalRPN(rpn: List<String>, xValue: Float, isRadians: Boolean): Float? {
     val stack = ArrayDeque<Float>()
 
     for (token in rpn) {
@@ -216,9 +217,9 @@ private fun evalRPN(rpn: List<String>, xValue: Float): Float? {
 
                 val result = when (token) {
                     "sqrt" -> if (v < 0f) return null else sqrt(v)
-                    "sin" -> sin(v)
-                    "cos" -> cos(v)
-                    "tan" -> tan(v)
+                    "sin" -> sin(if (isRadians) v else v * PI.toFloat() / 180f)
+                    "cos" -> cos(if (isRadians) v else v * PI.toFloat() / 180f)
+                    "tan" -> tan(if (isRadians) v else v * PI.toFloat() / 180f)
                     "log" -> if (v <= 0f) return null else log10(v)
                     "ln" -> if (v <= 0f) return null else ln(v)
                     else -> return null
