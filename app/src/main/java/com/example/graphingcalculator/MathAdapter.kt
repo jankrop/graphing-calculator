@@ -1,7 +1,6 @@
 package com.example.graphingcalculator
 
 import android.content.Context
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,7 @@ import android.widget.TextView
  */
 class MathAdapter(
     private val context: Context,
-    private val data: MutableList<MathEntry>,
+    private val data: MutableList<String>,
     private val listener: OnEntryDeletedListener
 ) : BaseAdapter() {
     interface OnEntryDeletedListener {
@@ -32,7 +31,7 @@ class MathAdapter(
         val view = convertView ?: LayoutInflater.from(context)
             .inflate(R.layout.list_item_math, parent, false)
 
-        val entry = data[position]
+        val expression = data[position]
 
         val functionColor = view.findViewById<View>(R.id.functionColor)
         val expressionText = view.findViewById<TextView>(R.id.expressionText)
@@ -40,11 +39,11 @@ class MathAdapter(
         val deleteButton = view.findViewById<ImageButton>(R.id.deleteButton)
 
         functionColor.setBackgroundColor(Colors.palette[position % 4])
-        expressionText.text = "y = ${entry.expression}"
-        if (entry.data.all { it == entry.data[0] } && entry.data[0] != null) {
-            val resultString = if (entry.data[0]!! % 1 == 0f) { entry.data[0]!!.toInt().toString() } else { entry.data[0].toString() }
-            resultText.text = "= $resultString"
-        }
+        expressionText.text = "y = ${expression}"
+//        if (expression.data.all { it == expression.data[0] } && expression.data[0] != null) {
+//            val resultString = if (expression.data[0]!! % 1 == 0f) { expression.data[0]!!.toInt().toString() } else { expression.data[0].toString() }
+//            resultText.text = "= $resultString"
+//        }
 
         deleteButton.setOnClickListener {
             data.removeAt(position)

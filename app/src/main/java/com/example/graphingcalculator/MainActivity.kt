@@ -11,19 +11,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.snackbar.Snackbar
-import kotlin.math.exp
-import kotlin.math.sin
 
 /**
  * The app's main activity, containing the graph
  */
 class MainActivity : AppCompatActivity(), MathAdapter.OnEntryDeletedListener {
     private lateinit var adapter: MathAdapter
-    private val expressions = arrayListOf<MathEntry>()
+    private val expressions = arrayListOf<String>()
     private lateinit var graph: Graph
 
     override fun onEntryDeleted() {
-        graph.setData(expressions)
+        graph.setExpressions(expressions)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,22 +42,24 @@ class MainActivity : AppCompatActivity(), MathAdapter.OnEntryDeletedListener {
         val expressionList = findViewById<ListView>(R.id.expressionList)
         val settingsButton = findViewById<ImageButton>(R.id.settingsButton)
 
-        val sharedPref = getSharedPreferences("prefs", MODE_PRIVATE)
-
         adapter = MathAdapter(this, expressions, this)
         expressionList.adapter = adapter
+
+        findViewById<ImageButton>(R.id.leftButton).setOnClickListener { graph.moveLeft() }
+        findViewById<ImageButton>(R.id.rightButton).setOnClickListener { graph.moveRight() }
+        findViewById<ImageButton>(R.id.upButton).setOnClickListener { graph.moveUp() }
+        findViewById<ImageButton>(R.id.downButton).setOnClickListener { graph.moveDown() }
+        findViewById<ImageButton>(R.id.zoomInButton).setOnClickListener { graph.zoomIn() }
+        findViewById<ImageButton>(R.id.zoomOutButton).setOnClickListener { graph.zoomOut() }
 
         plotButton.setOnClickListener {
             val expression = expressionInput.text.toString()
 
             try {
-                expressions.add(MathEntry(
-                    expression,
-                    parseMath(expression, -10f, 10f, 0.1f, sharedPref.getBoolean("isRadians", true))
-                ))
+                expressions.add(expression)
                 expressionInput.setText("")
                 adapter.notifyDataSetChanged()
-                graph.setData(expressions)
+                graph.setExpressions(expressions)
             } catch (e: Exception) {
                 Snackbar.make(findViewById(android.R.id.content), "Malformed expression", Snackbar.LENGTH_SHORT).show()
             }

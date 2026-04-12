@@ -1,6 +1,7 @@
 package com.example.graphingcalculator
 
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -35,47 +36,89 @@ class Graph(context: Context, attrs: AttributeSet) : View(context, attrs) {
         style = Paint.Style.STROKE
     }
 
-    private var data: ArrayList<MathEntry> = arrayListOf()
-    private var precision: Float = 0.1f
+    private var expressions: ArrayList<String> = arrayListOf()
+    private var xAxis = 0f
+    private var yAxis = 0f
+    private var scale: Float = 1f
 
-    fun setData(values: ArrayList<MathEntry>) {
-        data = values
+    fun setExpressions(values: ArrayList<String>) {
+        expressions = values
+        invalidate()
+    }
+
+    fun moveLeft() {
+        xAxis += 1
+        invalidate()
+    }
+
+    fun moveRight() {
+        xAxis -= 1
+        invalidate()
+    }
+
+    fun moveUp() {
+        yAxis += 1
+        invalidate()
+    }
+
+    fun moveDown() {
+        yAxis -= 1
+        invalidate()
+    }
+
+    fun zoomIn() {
+        scale /= 2
+        xAxis *= 2
+        yAxis *= 2
+        invalidate()
+    }
+
+    fun zoomOut() {
+        scale *= 2
+        xAxis /= 2
+        yAxis /= 2
         invalidate()
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
+        val sharedPref = context.getSharedPreferences("prefs", MODE_PRIVATE)
+
         val graphWidth = width.toFloat()
         val graphHeight = height.toFloat()
 
         for (x in 0..20) {
-            if (x == 10) continue
+            if (x == 10 + xAxis.toInt()) continue
             canvas.drawLine(
-                x.toFloat() / 20 * graphWidth, 0f,
-                x.toFloat() / 20 * graphWidth, graphHeight, gridPaint
+                (x.toFloat() + xAxis % 1) / 20 * graphWidth, 0f,
+                (x.toFloat() + xAxis % 1) / 20 * graphWidth, graphHeight, gridPaint
             )
         }
 
         for (y in 0..20) {
-            if (y == 10) continue
+            if (y == 10 + yAxis.toInt()) continue
             canvas.drawLine(
-                0f, y.toFloat() / 20 * graphHeight,
-                graphWidth, y.toFloat() / 20 * graphHeight, gridPaint
+                0f, (y.toFloat() + yAxis % 1) / 20 * graphHeight,
+                graphWidth, (y.toFloat() + yAxis % 1) / 20 * graphHeight, gridPaint
             )
         }
 
-        canvas.drawLine(graphWidth / 2, 0f, graphWidth / 2, graphHeight, axisPaint)
-        canvas.drawLine(0f, graphHeight / 2, graphWidth, graphHeight / 2, axisPaint)
+        val xAxisPosition = graphHeight / 2 + yAxis / 20 * graphHeight
+        val yAxisPosition = graphWidth / 2 + xAxis / 20 * graphWidth
 
-        data.forEachIndexed { entryIndex, entry ->
-            val points = entry.data.mapIndexed { i, value ->
+        canvas.drawLine(0f, xAxisPosition, graphWidth, xAxisPosition, axisPaint)
+        canvas.drawLine(yAxisPosition, 0f, yAxisPosition, graphHeight, axisPaint)
+
+        expressions.forEachIndexed { exprIndex, expr ->
+            val data = parseMath(expr, (-10f - xAxis) * scale, (10f - xAxis) * scale, 0.05f * scale, sharedPref.getBoolean("isRadians", true))
+            val points = data.mapIndexed { i, value ->
                 if (value == null) {
                     null
                 } else {
                     PointF(
-                        i.toFloat() / 20 * graphWidth * precision,
-                        graphHeight - (value + 10) / 20 * graphHeight
+                        i.toFloat() / 400 * graphWidth,
+                        graphHeight - (value + 10 * scale - yAxis) / 20 * graphHeight / scale
                     )
                 }
             }
@@ -96,9 +139,7 @@ class Graph(context: Context, attrs: AttributeSet) : View(context, attrs) {
                 }
             }
 
-            canvas.drawPath(path, paints[entryIndex % 4])
+            canvas.drawPath(path, paints[exprIndex % 4])
         }
-
-
     }
 }
