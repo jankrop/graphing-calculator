@@ -12,7 +12,7 @@ class FunctionParserTest {
      */
     @Test
     fun testPolynomial() {
-        val result = parseMath("-x^2 + 3x - 2", 0f, 2f, 1f)
+        val result = parseMath("-x^2 + 3x - 2", 0f, 2f, 1f, true)
 
         assertEquals(listOf(-2f, 0f, 0f), result)
     }
@@ -23,7 +23,7 @@ class FunctionParserTest {
      */
     @Test
     fun testDivisionByZero() {
-        val result = parseMath("1/x", -1f, 1f, 1f)
+        val result = parseMath("1/x", -1f, 1f, 1f, true)
 
         assertEquals(3, result.size)
         assertEquals(-1f, result[0])
@@ -37,7 +37,7 @@ class FunctionParserTest {
      */
     @Test
     fun testTrigFunctions() {
-        val result = parseMath("sin(x)", (PI / 2).toFloat(), (PI / 2).toFloat(), 1f)
+        val result = parseMath("sin(x)", (PI / 2).toFloat(), (PI / 2).toFloat(), 1f, true)
 
         assertEquals(1, result.size)
         assertNotNull(result[0])
@@ -51,8 +51,8 @@ class FunctionParserTest {
      */
     @Test
     fun testLogsAndConstants() {
-        val result1 = parseMath("log(100)", 0f, 0f, 1f)
-        val result2 = parseMath("ln(e)", 0f, 0f, 1f)
+        val result1 = parseMath("log(100)", 0f, 0f, 1f, true)
+        val result2 = parseMath("ln(e)", 0f, 0f, 1f, true)
 
         assertEquals(2f, result1[0])
         assertEquals(1f, result2[0]!!, 1e-4f)
@@ -64,7 +64,7 @@ class FunctionParserTest {
      */
     @Test
     fun testNestedFunctions() {
-        val result = parseMath("sqrt(4 + sin(pi/2)^2)", 0f, 0f, 1f)
+        val result = parseMath("sqrt(4 + sin(pi/2)^2)", 0f, 0f, 1f, true)
 
         assertNotNull(result[0])
         assertEquals(kotlin.math.sqrt(5f), result[0]!!, 1e-4f)
@@ -75,6 +75,6 @@ class FunctionParserTest {
      */
     @Test(expected = IllegalArgumentException::class)
     fun testUnknownIdentifier() {
-        parseMath("h", 0f, 1f, 1f)
+        parseMath("h", 0f, 1f, 1f, true)
     }
 }
